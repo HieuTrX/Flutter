@@ -10,11 +10,13 @@ class RootPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _RootPageState();
 }
+
 enum AuthStatus {
   NOT_DETERMINED,
   LOGGED_OUT,
   LOGGED_IN,
 }
+
 class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "";
@@ -27,10 +29,11 @@ class _RootPageState extends State<RootPage> {
           _userId = user?.uid;
         }
         authStatus =
-        user?.uid == null ? AuthStatus.LOGGED_OUT : AuthStatus.LOGGED_IN;
+            user?.uid == null ? AuthStatus.LOGGED_OUT : AuthStatus.LOGGED_IN;
       });
     });
   }
+
   void _onLoggedIn() {
     widget.auth.getCurrentUser().then((user) {
       setState(() {
@@ -41,12 +44,14 @@ class _RootPageState extends State<RootPage> {
       authStatus = AuthStatus.LOGGED_IN;
     });
   }
+
   void _onSignedOut() {
     setState(() {
       authStatus = AuthStatus.LOGGED_OUT;
       _userId = "";
     });
   }
+
   Widget progressScreenWidget() {
     return Scaffold(
       body: Container(
@@ -55,8 +60,10 @@ class _RootPageState extends State<RootPage> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
+    print(authStatus);
     switch (authStatus) {
       case AuthStatus.NOT_DETERMINED:
         return progressScreenWidget();

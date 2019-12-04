@@ -1,6 +1,7 @@
 import 'package:demo/services/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 class LoginSignupPage extends StatefulWidget {
   LoginSignupPage({this.auth, this.onSignedIn});
   final BaseAuth auth;
@@ -8,7 +9,9 @@ class LoginSignupPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _LoginSignupPageState();
 }
+
 enum FormMode { LOGIN, SIGNUP }
+
 class _LoginSignupPageState extends State<LoginSignupPage> {
   final _formKey = new GlobalKey<FormState>();
   String _email;
@@ -21,9 +24,6 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Flutter login demo"),
-      ),
       body: Column(
         children: <Widget>[
           formWidget(),
@@ -35,6 +35,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       ),
     );
   }
+
   Widget progressWidget() {
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
@@ -44,6 +45,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       width: 0.0,
     );
   }
+
   Widget formWidget() {
     return Form(
       key: _formKey,
@@ -55,6 +57,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       ),
     );
   }
+
   Widget _emailWidget() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
@@ -73,6 +76,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       ),
     );
   }
+
   Widget _passwordWidget() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
@@ -91,6 +95,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       ),
     );
   }
+
   Widget loginButtonWidget() {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
@@ -101,23 +106,25 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
           color: Colors.blue,
           child: _formMode == FormMode.LOGIN
               ? new Text('Login',
-              style: new TextStyle(fontSize: 20.0, color: Colors.white))
+                  style: new TextStyle(fontSize: 20.0, color: Colors.white))
               : new Text('Create account',
-              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
           onPressed: _validateAndSubmit,
         ));
   }
+
   Widget secondaryButton() {
     return new FlatButton(
       child: _formMode == FormMode.LOGIN
           ? new Text('Create an account',
-          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
           : new Text('Have an account? Sign in',
-          style:
-          new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+              style:
+                  new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN ? showSignupForm : showLoginForm,
     );
   }
+
   void showSignupForm() {
     _formKey.currentState.reset();
     _errorMessage = "";
@@ -125,6 +132,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       _formMode = FormMode.SIGNUP;
     });
   }
+
   void showLoginForm() {
     _formKey.currentState.reset();
     _errorMessage = "";
@@ -132,6 +140,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       _formMode = FormMode.LOGIN;
     });
   }
+
   Widget errorWidget() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
       return new Text(
@@ -148,6 +157,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       );
     }
   }
+
   bool _validateAndSave() {
     final form = _formKey.currentState;
     if (form.validate()) {
@@ -156,6 +166,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
     }
     return false;
   }
+
   _validateAndSubmit() async {
     setState(() {
       _errorMessage = "";
@@ -165,7 +176,9 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
+          print('test');
           userId = await widget.auth.signIn(_email, _password);
+          print(userId);
         } else {
           userId = await widget.auth.signUp(_email, _password);
         }
