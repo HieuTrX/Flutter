@@ -24,8 +24,23 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: new Container(
+                margin: const EdgeInsets.only(top: 40.0),
+                width: 190.0,
+                height: 190.0,
+                decoration: new BoxDecoration(
+                    border: Border.all(color: Colors.blueAccent),
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                        fit: BoxFit.fill,
+                        image: new NetworkImage(
+                            "https://scontent.fdad1-1.fna.fbcdn.net/v/t1.15752-9/79167159_814394612319348_9093345385186852864_n.png?_nc_cat=102&_nc_ohc=K_t-Ug4v5hMAQkhbP1DWxuKztcSU0049yV61yazsOBOasAnQ7pTOyN3gA&_nc_ht=scontent.fdad1-1.fna&oh=12397862489ba80185eecf8faf47dd7d&oe=5E874B5B")))),
+          ),
           formWidget(),
           loginButtonWidget(),
           secondaryButton(),

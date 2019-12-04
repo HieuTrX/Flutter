@@ -1,17 +1,34 @@
+import 'package:demo/models/Tree.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'createtodo.dart';
 import '../../services/FirestoreService.dart';
 
-class NewTask extends StatefulWidget {
-  NewTask();
+class AddRecord extends StatefulWidget {
+  final Tree tree;
+  AddRecord(this.tree);
   @override
-  _NewTaskState createState() => _NewTaskState();
+  _AddRecordState createState() => _AddRecordState();
 }
 
-class _NewTaskState extends State<NewTask> {
+class _AddRecordState extends State<AddRecord> {
   FirestoreService fireService = new FirestoreService();
-  String name, age, status, image, area;
+
+  String id, name, age, status, image, area, record;
+  List<String> comment;
+  Tree tree;
+  initState() {
+    this.tree = widget.tree;
+    this.id = widget.tree.id;
+    this.name = widget.tree.name;
+    this.age = widget.tree.age.toString();
+    this.status = widget.tree.status;
+    this.image = widget.tree.image;
+    this.area = widget.tree.area;
+    this.record = widget.tree.record;
+    this.comment = widget.tree.comment;
+  }
 
   getName(name) {
     this.name = name;
@@ -40,16 +57,16 @@ class _NewTaskState extends State<NewTask> {
       _myTreeType = value;
       switch (_myTreeType) {
         case 1:
-          taskVal = 'Flower';
+          taskVal = 'Cut Leaf';
           break;
         case 2:
-          taskVal = 'Fruit';
+          taskVal = 'Fertilize';
           break;
         case 3:
-          taskVal = 'Wood';
+          taskVal = 'Cut Branch';
           break;
         case 4:
-          taskVal = 'Grass';
+          taskVal = 'Water';
           break;
       }
     });
@@ -73,18 +90,46 @@ class _NewTaskState extends State<NewTask> {
         isGrass = true;
         break;
     }
+
     var todo = List<String>();
     final prefs = await SharedPreferences.getInstance();
     var age = int.parse(this.age);
     var idUser = prefs.getString('uid') ?? 0;
-    var record = 'test';
-    var comment = [];
-    fireService.createTree(id, image, status, isFlower, isFruit, isWood,
-        isGrass, name, age, area, todo, idUser, record, comment);
+    var idTreeFireStore = this.id;
+    var comment = this.comment;
+    var email = prefs.getString('email') ?? 0;
+    tree.updateRecord(taskVal, email);
+    print(tree.record.toString());
+    fireService.updateData(
+        idTreeFireStore,
+        id,
+        image,
+        status,
+        isFlower,
+        isFruit,
+        isWood,
+        isGrass,
+        name,
+        age,
+        area,
+        todo,
+        idUser,
+        tree.record,
+        comment);
   }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controllerName = new TextEditingController();
+    _controllerName.text = this.name;
+    TextEditingController _controllerAge = new TextEditingController();
+    _controllerAge.text = this.age;
+    TextEditingController _controllerStatus = new TextEditingController();
+    _controllerStatus.text = this.status;
+    TextEditingController _controllerImage = new TextEditingController();
+    _controllerImage.text = this.image;
+    TextEditingController _controllerArea = new TextEditingController();
+    _controllerArea.text = this.area;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
@@ -95,62 +140,9 @@ class _NewTaskState extends State<NewTask> {
             height: MediaQuery.of(context).size.height - 80,
             child: ListView(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: TextField(
-                    // controller: _taskNameController,
-                    onChanged: (String name) {
-                      getName(name);
-                    },
-                    decoration: InputDecoration(labelText: "Name: "),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: TextField(
-                    //controller: _taskDetailsController,
-                    decoration: InputDecoration(labelText: "Age: "),
-                    onChanged: (String age) {
-                      getAge(age);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: TextField(
-                    // controller: _statusController,
-                    decoration: InputDecoration(labelText: "Status: "),
-                    onChanged: (String taskdate) {
-                      getStatus(taskdate);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: TextField(
-                    // controller: _imageController,
-                    decoration: InputDecoration(labelText: "Image: "),
-                    onChanged: (String image) {
-                      getImage(image);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: TextField(
-                    // controller: _imageController,
-                    decoration: InputDecoration(labelText: "Area: "),
-                    onChanged: (String area) {
-                      getArea(area);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
                 Center(
                   child: Text(
-                    'Select Tree Type:',
+                    'Select Action:',
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
@@ -168,7 +160,7 @@ class _NewTaskState extends State<NewTask> {
                           activeColor: Color(0xff4158ba),
                         ),
                         Text(
-                          'Flower',
+                          'Cut Leaf',
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ],
@@ -183,7 +175,7 @@ class _NewTaskState extends State<NewTask> {
                           activeColor: Color(0xfffb537f),
                         ),
                         Text(
-                          'Fruit',
+                          'Fertilize',
                           style: TextStyle(
                             fontSize: 16.0,
                           ),
@@ -200,7 +192,7 @@ class _NewTaskState extends State<NewTask> {
                           activeColor: Color(0xff4caf50),
                         ),
                         Text(
-                          'Wood',
+                          'Cut branch',
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ],
@@ -215,7 +207,7 @@ class _NewTaskState extends State<NewTask> {
                           activeColor: Color(0xff9962d0),
                         ),
                         Text(
-                          'Grass',
+                          'Water',
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ],
@@ -239,6 +231,7 @@ class _NewTaskState extends State<NewTask> {
                         color: Color(0xFFFA7397),
                         onPressed: () {
                           createData();
+                          Navigator.pop(context);
                           Navigator.pop(context);
                         },
                         child: const Text(

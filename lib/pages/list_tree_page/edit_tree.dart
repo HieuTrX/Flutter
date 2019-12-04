@@ -1,17 +1,33 @@
+import 'package:demo/models/Tree.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'createtodo.dart';
 import '../../services/FirestoreService.dart';
 
-class NewTask extends StatefulWidget {
-  NewTask();
+class EditTree extends StatefulWidget {
+  final Tree tree;
+  EditTree(this.tree);
   @override
-  _NewTaskState createState() => _NewTaskState();
+  _EditTreeState createState() => _EditTreeState();
 }
 
-class _NewTaskState extends State<NewTask> {
+class _EditTreeState extends State<EditTree> {
   FirestoreService fireService = new FirestoreService();
-  String name, age, status, image, area;
+
+  String id, name, age, status, image, area, record;
+  List<String> comment;
+
+  initState() {
+    this.id = widget.tree.id;
+    this.name = widget.tree.name;
+    this.age = widget.tree.age.toString();
+    this.status = widget.tree.status;
+    this.image = widget.tree.image;
+    this.area = widget.tree.area;
+    this.record = widget.tree.record;
+    this.comment = widget.tree.comment;
+  }
 
   getName(name) {
     this.name = name;
@@ -73,18 +89,44 @@ class _NewTaskState extends State<NewTask> {
         isGrass = true;
         break;
     }
+
     var todo = List<String>();
     final prefs = await SharedPreferences.getInstance();
     var age = int.parse(this.age);
     var idUser = prefs.getString('uid') ?? 0;
-    var record = 'test';
-    var comment = [];
-    fireService.createTree(id, image, status, isFlower, isFruit, isWood,
-        isGrass, name, age, area, todo, idUser, record, comment);
+    var idTreeFireStore = this.id;
+    var record = this.record;
+    var comment = this.comment;
+    fireService.updateData(
+        idTreeFireStore,
+        id,
+        image,
+        status,
+        isFlower,
+        isFruit,
+        isWood,
+        isGrass,
+        name,
+        age,
+        area,
+        todo,
+        idUser,
+        record,
+        comment);
   }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controllerName = new TextEditingController();
+    _controllerName.text = this.name;
+    TextEditingController _controllerAge = new TextEditingController();
+    _controllerAge.text = this.age;
+    TextEditingController _controllerStatus = new TextEditingController();
+    _controllerStatus.text = this.status;
+    TextEditingController _controllerImage = new TextEditingController();
+    _controllerImage.text = this.image;
+    TextEditingController _controllerArea = new TextEditingController();
+    _controllerArea.text = this.area;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
@@ -98,18 +140,22 @@ class _NewTaskState extends State<NewTask> {
                 Padding(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   child: TextField(
-                    // controller: _taskNameController,
+                    controller: _controllerName,
                     onChanged: (String name) {
                       getName(name);
                     },
-                    decoration: InputDecoration(labelText: "Name: "),
+                    decoration: InputDecoration(
+                      labelText: "Name: ",
+                    ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   child: TextField(
-                    //controller: _taskDetailsController,
-                    decoration: InputDecoration(labelText: "Age: "),
+                    controller: _controllerAge,
+                    decoration: InputDecoration(
+                      labelText: "Age: ",
+                    ),
                     onChanged: (String age) {
                       getAge(age);
                     },
@@ -118,8 +164,10 @@ class _NewTaskState extends State<NewTask> {
                 Padding(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   child: TextField(
-                    // controller: _statusController,
-                    decoration: InputDecoration(labelText: "Status: "),
+                    controller: _controllerStatus,
+                    decoration: InputDecoration(
+                      labelText: "Status: ",
+                    ),
                     onChanged: (String taskdate) {
                       getStatus(taskdate);
                     },
@@ -128,8 +176,10 @@ class _NewTaskState extends State<NewTask> {
                 Padding(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   child: TextField(
-                    // controller: _imageController,
-                    decoration: InputDecoration(labelText: "Image: "),
+                    controller: _controllerImage,
+                    decoration: InputDecoration(
+                      labelText: "Image: ",
+                    ),
                     onChanged: (String image) {
                       getImage(image);
                     },
@@ -138,8 +188,10 @@ class _NewTaskState extends State<NewTask> {
                 Padding(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   child: TextField(
-                    // controller: _imageController,
-                    decoration: InputDecoration(labelText: "Area: "),
+                    controller: _controllerArea,
+                    decoration: InputDecoration(
+                      labelText: "Area: ",
+                    ),
                     onChanged: (String area) {
                       getArea(area);
                     },
@@ -239,6 +291,7 @@ class _NewTaskState extends State<NewTask> {
                         color: Color(0xFFFA7397),
                         onPressed: () {
                           createData();
+                          Navigator.pop(context);
                           Navigator.pop(context);
                         },
                         child: const Text(

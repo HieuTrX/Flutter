@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseAuth {
   Future<String> signIn(String email, String password);
@@ -14,6 +15,9 @@ class Auth implements BaseAuth {
   Future<String> signIn(String email, String password) async {
     var result = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('uid', result.user.uid);
+    prefs.setString('email', result.user.email);
     return result.user.uid;
   }
 

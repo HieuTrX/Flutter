@@ -6,12 +6,10 @@ import 'package:flutter/material.dart';
 class ListTreeTab extends StatelessWidget {
   List<Tree> list;
   ListTreeTab({Key key, this.list}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('List Tree'),
-      ),
       body: _buildList(list),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -34,6 +32,7 @@ class ListTreeTab extends StatelessWidget {
           return ListTile(
             title: Text('${list[index].name}'),
             onTap: () {
+              print(list[index].toString());
               Navigator.push(
                 context,
                 MaterialPageRoute(

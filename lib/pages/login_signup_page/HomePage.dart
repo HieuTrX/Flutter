@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/models/Tree.dart';
+import 'package:demo/pages/search_tree_page/SearchPage.dart';
 import 'package:demo/services/FirestoreService.dart';
 import 'package:demo/services/authentication.dart';
 import 'package:flutter/material.dart';
@@ -57,10 +58,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     loadState();
     return new DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: new AppBar(
-            title: new Text('Flutter login demo'),
+            title: new Text('List view'),
             actions: <Widget>[
               new FlatButton(
                   child: new Text('Logout',
@@ -77,10 +78,7 @@ class _HomePageState extends State<HomePage> {
                     list: trees,
                   )),
               new Container(
-                color: Colors.orange,
-              ),
-              new Container(
-                color: Colors.lightGreen,
+                child: SearchPage(),
               ),
             ],
           ),
@@ -88,10 +86,6 @@ class _HomePageState extends State<HomePage> {
             tabs: <Widget>[
               Tab(icon: new Icon(Icons.list), text: 'ListTree'),
               Tab(icon: new Icon(Icons.search), text: 'SearchTree'),
-              Tab(
-                icon: new Icon(Icons.work),
-                text: 'Task',
-              ),
             ],
             labelColor: Colors.yellow,
             unselectedLabelColor: Colors.blue,
